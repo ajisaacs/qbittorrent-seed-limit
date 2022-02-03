@@ -19,10 +19,9 @@ except qbittorrentapi.LoginFailed as e:
 # display qBittorrent info
 print(f'qBittorrent: {qbt_client.app.version}')
 print(f'qBittorrent Web API: {qbt_client.app.web_api_version}')
-for k,v in qbt_client.app.build_info.items(): print(f'{k}: {v}')
+# for k,v in qbt_client.app.build_info.items(): print(f'{k}: {v}')
 
 max_seeds = 25
-has_changes = False
 
 # retrieve and show all torrents
 for torrent in qbt_client.torrents.info.all():
@@ -30,15 +29,6 @@ for torrent in qbt_client.torrents.info.all():
         continue
 
     if torrent.num_complete < max_seeds:
-        if not torrent.state_enum.is_uploading:
-            torrent.resume()
-            print(f"Resume seeding for torrent: {torrent.name}")
-            has_changes = True
+        torrent.uploadLimit = 0
     else:
-        if torrent.state_enum.is_uploading:
-            torrent.pause()
-            print(f"Paused torrent: {torrent.name}")
-            has_changes = True
-
-if not has_changes:
-    print("No changes made")
+        torrent.uploadLimit = 10240
