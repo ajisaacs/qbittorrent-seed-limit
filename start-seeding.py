@@ -1,5 +1,6 @@
 import qbittorrentapi
 import time
+import datetime
 
 # instantiate a Client using the appropriate WebUI configuration
 qbt_client = qbittorrentapi.Client(
@@ -40,6 +41,15 @@ def update_seed_count():
     print('Waiting 30 seconds for seeds to update...')
     time.sleep(30)
 
+logfile = open(r"log.txt", "a")
+
+def log(msg):
+    logfile.write('[{}]  {}\n'.format(datetime.datetime.now(), msg))
+    logfile.flush()
+    print(msg)
+
+log("starting")
 login()
 update_seed_count()
 dostuff()
+log("done")
