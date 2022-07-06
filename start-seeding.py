@@ -25,24 +25,26 @@ def set_ratio_limits():
     for torrent in qbt_client.torrents.info.all():
         if torrent.state_enum.is_downloading:
             continue
+        
+        # ratio_limit
+        #   -2 = use the global value
+        #   -1 = no limit
 
-        # -2  =  use the global value
-        # -1  =  no limit
-        x = -2
+        if torrent.name == 'Storks.2016.1080p.BRRip-YTS':
+            print('')
 
-        if torrent.num_complete <= unlimited_seed_threshold:
-            x = -1
-
-        if x == torrent.ratio_limit:
-            continue
-
-        torrent.set_share_limits(ratio_limit=x, seeding_time_limit=-2)
-        torrent.resume()
-
-        log(f'{torrent.name}: set ratio limit to \'{torrent.ratio_limit}\'')
+        if torrent.num_complete > unlimited_seed_threshold:
+            if torrent.ratio_limit != -2:
+                torrent.set_share_limits(ratio_limit=-2, seeding_time_limit=-2)
+                log(f'{torrent.name}: set ratio limit to global limit')
+        else:
+            if torrent.ratio_limit != -1 or 'paused' in torrent.state:
+                torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-2)
+                torrent.resume()
+                log(f'{torrent.name}: removed seed limit')
 
 
-logfile = open(r"C:\Tools\qbittorrent\log.txt", "a")
+logfile = open(r"log.txt", "a")
 
 def log(msg):
     logfile.write(f'[{datetime.datetime.now()}]  {msg}\n')
