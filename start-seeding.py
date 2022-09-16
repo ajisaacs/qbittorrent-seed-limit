@@ -30,9 +30,6 @@ def set_ratio_limits():
         #   -2 = use the global value
         #   -1 = no limit
 
-        if torrent.name == 'Storks.2016.1080p.BRRip-YTS':
-            print('')
-
         if torrent.num_complete > unlimited_seed_threshold:
             if torrent.ratio_limit != -2:
                 torrent.set_share_limits(ratio_limit=-2, seeding_time_limit=-2)
